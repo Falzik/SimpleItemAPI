@@ -1,0 +1,8 @@
+name: FastInteractItems
+version: '1.0'
+main: me.falzik.vanilla.fastInteractItems.FastInteractItems
+api-version: '1.21'
+authors: [ Falzik ]
+commands:
+  compass:
+    permission: simpleitem.compasstest
