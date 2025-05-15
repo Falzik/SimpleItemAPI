@@ -4,5 +4,5 @@ main: me.falzik.vanilla.fastInteractItems.FastInteractItems
 api-version: '1.21'
 authors: [ Falzik ]
 commands:
-  compass:
+  example:
     permission: simpleitem.compasstest

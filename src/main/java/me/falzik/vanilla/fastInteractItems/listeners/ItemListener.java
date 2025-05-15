@@ -6,7 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,36 +20,44 @@ import org.bukkit.inventory.ItemStack;
 public class ItemListener implements Listener {
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent e) {
-        if (e.getAction() != Action.RIGHT_CLICK_AIR &&
-                e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+    public void on(PlayerInteractEvent e) {
+        if (e.getItem() == null) return;
 
-        Player player = e.getPlayer();
-        ItemStack item = e.getItem();
+        SimpleItem simpleItem = SimpleItem.getSimpleItem(e.getItem());
+        if (simpleItem == null) return;
 
-        if (SimpleItem.isSimpleItem(item)) {
-            e.setCancelled(true);
-
-            SimpleItem simpleItem = SimpleItem.getSimpleItemBy(item);
-            if (simpleItem != null) {
-                simpleItem.click(player);
-            }
+        if (simpleItem.getClickAction() == e.getAction()) {
+            simpleItem.click(e.getPlayer(), e.getAction());
         }
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player)) return;
+    public void on(InventoryClickEvent e) {
+        if (e.getCurrentItem() == null) return;
 
-        ItemStack clicked = e.getCurrentItem();
-        if (SimpleItem.isSimpleItem(clicked)) {
+        SimpleItem simpleItem = SimpleItem.getSimpleItem(e.getCurrentItem());
+        if (simpleItem != null && !simpleItem.isCanChangePosition()) {
             e.setCancelled(true);
-
-            Player player = (Player) e.getWhoClicked();
-            SimpleItem simpleItem = SimpleItem.getSimpleItemBy(clicked);
-            if (simpleItem != null) {
-                simpleItem.click(player);
-            }
         }
     }
+
+    @EventHandler
+    public void on(PlayerDropItemEvent e) {
+        ItemStack droppedItem = e.getItemDrop().getItemStack();
+        SimpleItem simpleItem = SimpleItem.getSimpleItem(droppedItem);
+
+        if (simpleItem != null && !simpleItem.isCanDrop()) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void on(BlockPlaceEvent e) {
+        final Player player = e.getPlayer();
+
+        if(SimpleItem.getSimpleItem(e.getItemInHand()) != null) {
+            e.setCancelled(true);
+        }
+    }
+
 }
