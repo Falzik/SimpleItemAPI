@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FastInteractItems.iml" filepath="$PROJECT_DIR$/FastInteractItems.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/FastInteractItems.iml" filepath="$PROJECT_DIR$/.idea/FastInteractItems.iml" />
     </modules>
   </component>
 </project>

@@ -3,6 +3,7 @@ package me.falzik.vanilla.fastInteractItems.items;
 
 import me.falzik.vanilla.fastInteractItems.FastInteractItems;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +12,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
@@ -25,12 +27,12 @@ public class SimpleItem implements Item {
 
     private Consumer<Player> action;
 
-    private Action clickAction;
+    private List<Action> actions;
 
     private boolean canDrop = true;
     private boolean canChangePosition = true;
 
-    public SimpleItem(ItemStack itemStack) {
+    public SimpleItem(ItemStack itemStack, boolean isCanDrop, boolean isCanChangePosition) {
         this.itemStack = itemStack;
 
         int randomID = new Random().nextInt(100000);
@@ -46,6 +48,9 @@ public class SimpleItem implements Item {
                 id
         );
         itemStack.setItemMeta(meta);
+
+        this.canDrop = isCanDrop;
+        this.canChangePosition = isCanChangePosition;
     }
 
     @Override
@@ -53,16 +58,16 @@ public class SimpleItem implements Item {
         return itemStack;
     }
 
-    public void setAction(Action action) {
-        this.clickAction = action;
+    public void setAction(List<Action> action) {
+        this.actions = action;
     }
 
     public void setClickAction(Consumer<Player> action) {
         this.action = action;
     }
 
-    public Action getClickAction() {
-        return clickAction;
+    public List<Action> getClickAction() {
+        return actions;
     }
 
     public boolean isCanDrop() {
@@ -75,10 +80,9 @@ public class SimpleItem implements Item {
 
     @Override
     public void click(Player player, Action action) {
-        if(this.clickAction == action) {
-            if(this.action != null) {
-                this.action.accept(player);
-            }
+        if(this.action == null) return;
+        if(actions.contains(action)) {
+            this.action.accept(player);
         }
     }
 

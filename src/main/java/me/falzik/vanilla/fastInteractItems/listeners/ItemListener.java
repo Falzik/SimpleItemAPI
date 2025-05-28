@@ -26,9 +26,8 @@ public class ItemListener implements Listener {
         SimpleItem simpleItem = SimpleItem.getSimpleItem(e.getItem());
         if (simpleItem == null) return;
 
-        if (simpleItem.getClickAction() == e.getAction()) {
-            simpleItem.click(e.getPlayer(), e.getAction());
-        }
+        e.setCancelled(true);
+        simpleItem.click(e.getPlayer(), e.getAction());
     }
 
     @EventHandler
