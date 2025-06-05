@@ -46,11 +46,8 @@ public class SimpleItem implements Item {
         this.canDrop = isCanDrop;
         this.canChangePosition = isCanChangePosition;
 
-        actions.add(
-                Action.RIGHT_CLICK_AIR
-        );
-        actions.add(
-                Action.RIGHT_CLICK_BLOCK
+        actions = List.of(
+                Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
         );
     }
 
