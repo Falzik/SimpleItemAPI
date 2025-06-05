@@ -3,7 +3,6 @@ package me.falzik.vanilla.fastInteractItems.items;
 
 import me.falzik.vanilla.fastInteractItems.FastInteractItems;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +13,6 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 public class SimpleItem implements Item {
@@ -22,8 +20,6 @@ public class SimpleItem implements Item {
     private final ItemStack itemStack;
 
     private static final HashMap<Integer, SimpleItem> simpleItems = new HashMap<>();
-
-    private final int id;
 
     private Consumer<Player> action;
 
@@ -37,15 +33,13 @@ public class SimpleItem implements Item {
 
         int randomID = new Random().nextInt(100000);
 
-        id = randomID;
-
         simpleItems.put(randomID, this);
 
         ItemMeta meta = itemStack.getItemMeta();
         meta.getPersistentDataContainer().set(
                 NamespacedKey.fromString("simpleitem", FastInteractItems.getInstance()),
                 PersistentDataType.INTEGER,
-                id
+                randomID
         );
         itemStack.setItemMeta(meta);
 
