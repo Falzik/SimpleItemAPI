@@ -51,6 +51,13 @@ public class SimpleItem implements Item {
 
         this.canDrop = isCanDrop;
         this.canChangePosition = isCanChangePosition;
+
+        actions.add(
+                Action.RIGHT_CLICK_AIR
+        );
+        actions.add(
+                Action.RIGHT_CLICK_BLOCK
+        );
     }
 
     @Override
@@ -95,17 +102,15 @@ public class SimpleItem implements Item {
     }
 
     public static SimpleItem getSimpleItem(ItemStack itemStack) {
-        if (itemStack == null || !itemStack.hasItemMeta()) return null;
+        if (itemStack == null) return null;
 
         ItemMeta meta = itemStack.getItemMeta();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        NamespacedKey key = NamespacedKey.fromString("simpleitem", FastInteractItems.getInstance());
-
-        if (pdc.has(key, PersistentDataType.INTEGER)) {
-            int id = pdc.get(key, PersistentDataType.INTEGER);
+        if(pdc.has(NamespacedKey.fromString("simpleitem"))) {
+            int id = pdc.get(NamespacedKey.fromString("simpleitem"),
+                    PersistentDataType.INTEGER);
             return simpleItems.get(id);
         }
-
         return null;
     }
 
