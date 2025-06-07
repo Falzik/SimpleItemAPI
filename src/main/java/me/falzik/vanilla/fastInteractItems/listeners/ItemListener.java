@@ -12,6 +12,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 /**
  * Author: Falzik
  * Created time: 28.04.2025 11:33
@@ -21,13 +23,16 @@ public class ItemListener implements Listener {
 
     @EventHandler
     public void on(PlayerInteractEvent e) {
-        if (e.getItem() == null) return;
+        final Player player = e.getPlayer();
+        final ItemStack itemStack = e.getItem();
 
-        SimpleItem simpleItem = SimpleItem.getSimpleItem(e.getItem());
-        if (simpleItem == null) return;
+        if(itemStack == null) return;
 
-        e.setCancelled(true);
-        simpleItem.click(e.getPlayer(), e.getAction());
+        SimpleItem simpleItem = SimpleItem.getSimpleItem(itemStack);
+
+        if(simpleItem == null) return;
+
+        simpleItem.click(player, e.getAction());
     }
 
     @EventHandler

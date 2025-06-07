@@ -13,6 +13,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 public class SimpleItem implements Item {
@@ -31,17 +32,13 @@ public class SimpleItem implements Item {
     public SimpleItem(ItemStack itemStack, boolean isCanDrop, boolean isCanChangePosition) {
         this.itemStack = itemStack;
 
-        int randomID = new Random().nextInt(100000);
+        int randomID = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
 
         simpleItems.put(randomID, this);
 
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.getPersistentDataContainer().set(
-                NamespacedKey.fromString("simpleitem", FastInteractItems.getInstance()),
-                PersistentDataType.INTEGER,
-                randomID
-        );
-        itemStack.setItemMeta(meta);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.getPersistentDataContainer().set(NamespacedKey.fromString("simpleItem"), PersistentDataType.INTEGER, randomID);
+        itemStack.setItemMeta(itemMeta);
 
         this.canDrop = isCanDrop;
         this.canChangePosition = isCanChangePosition;
@@ -78,10 +75,10 @@ public class SimpleItem implements Item {
 
     @Override
     public void click(Player player, Action action) {
-        if(this.action == null) return;
-        if(actions.contains(action)) {
-            this.action.accept(player);
-        }
+        Consumer<Player> playerAction = this.action;
+        if(!actions.contains(action)) return;
+        if(playerAction == null) return;
+        playerAction.accept(player);
     }
 
     public void setCanDrop(boolean canDrop) {
@@ -96,11 +93,11 @@ public class SimpleItem implements Item {
         if (itemStack == null) return null;
 
         ItemMeta meta = itemStack.getItemMeta();
-        PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        if(pdc.has(NamespacedKey.fromString("simpleitem"))) {
-            int id = pdc.get(NamespacedKey.fromString("simpleitem"),
-                    PersistentDataType.INTEGER);
-            return simpleItems.get(id);
+        if(meta.getPersistentDataContainer().has(NamespacedKey.fromString("simpleItem"))) {
+            return simpleItems.get(
+                    meta.getPersistentDataContainer().get(NamespacedKey.fromString("simpleItem"),
+                            PersistentDataType.INTEGER)
+            );
         }
         return null;
     }
