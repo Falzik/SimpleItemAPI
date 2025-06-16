@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,16 +30,25 @@ public class SimpleItem implements Item {
     private boolean canDrop = true;
     private boolean canChangePosition = true;
 
-    public SimpleItem(ItemStack itemStack, boolean isCanDrop, boolean isCanChangePosition) {
+    private final Plugin plugin;
+
+    public SimpleItem(ItemStack itemStack, boolean isCanDrop, boolean isCanChangePosition, Plugin plugin) {
         this.itemStack = itemStack;
+        this.plugin = plugin;
+
         int randomID = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
+
         simpleItems.put(randomID, this);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        NamespacedKey key = new NamespacedKey(FastInteractItems.getInstance(), "simpleItem");
+
+        NamespacedKey key = new NamespacedKey(plugin, "simpleItem");
         itemMeta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, randomID);
+
         itemStack.setItemMeta(itemMeta);
+
         this.canDrop = isCanDrop;
         this.canChangePosition = isCanChangePosition;
+
         this.actions = List.of(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);
     }
 
