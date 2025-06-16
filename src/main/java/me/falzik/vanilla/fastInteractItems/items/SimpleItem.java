@@ -2,6 +2,7 @@ package me.falzik.vanilla.fastInteractItems.items;
 
 
 import me.falzik.vanilla.fastInteractItems.FastInteractItems;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -12,7 +13,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
@@ -31,21 +31,15 @@ public class SimpleItem implements Item {
 
     public SimpleItem(ItemStack itemStack, boolean isCanDrop, boolean isCanChangePosition) {
         this.itemStack = itemStack;
-
         int randomID = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
-
         simpleItems.put(randomID, this);
-
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.getPersistentDataContainer().set(NamespacedKey.fromString("simpleItem"), PersistentDataType.INTEGER, randomID);
+        NamespacedKey key = new NamespacedKey(FastInteractItems.getInstance(), "simpleItem");
+        itemMeta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, randomID);
         itemStack.setItemMeta(itemMeta);
-
         this.canDrop = isCanDrop;
         this.canChangePosition = isCanChangePosition;
-
-        actions = List.of(
-                Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
-        );
+        this.actions = List.of(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);
     }
 
     @Override
