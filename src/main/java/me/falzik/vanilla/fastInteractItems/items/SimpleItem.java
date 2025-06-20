@@ -40,16 +40,27 @@ public class SimpleItem implements Item {
 
         simpleItems.put(randomID, this);
         ItemMeta itemMeta = itemStack.getItemMeta();
-
-        NamespacedKey key = new NamespacedKey(plugin, "simpleItem");
-        itemMeta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, randomID);
-
-        itemStack.setItemMeta(itemMeta);
+        if (itemMeta != null) { // Null check for ItemMeta
+            NamespacedKey key = new NamespacedKey(plugin, "simpleItem");
+            itemMeta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, randomID);
+            itemStack.setItemMeta(itemMeta);
+        }
 
         this.canDrop = isCanDrop;
         this.canChangePosition = isCanChangePosition;
-
         this.actions = List.of(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK);
+    }
+
+    public static SimpleItem getSimpleItem(ItemStack itemStack, Plugin plugin) {
+        if (itemStack == null || !itemStack.hasItemMeta()) return null;
+
+        ItemMeta meta = itemStack.getItemMeta();
+        NamespacedKey key = new NamespacedKey(plugin, "simpleItem");
+        if (meta.getPersistentDataContainer().has(key, PersistentDataType.INTEGER)) {
+            Integer id = meta.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
+            return simpleItems.get(id);
+        }
+        return null;
     }
 
     @Override

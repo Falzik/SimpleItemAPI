@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
@@ -20,17 +21,22 @@ import java.util.List;
  */
 
 public class ItemListener implements Listener {
+    private final Plugin plugin;
+
+    public ItemListener(Plugin plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void on(PlayerInteractEvent e) {
         final Player player = e.getPlayer();
         final ItemStack itemStack = e.getItem();
 
-        if(itemStack == null) return;
+        if (itemStack == null) return;
 
-        SimpleItem simpleItem = SimpleItem.getSimpleItem(itemStack);
+        SimpleItem simpleItem = SimpleItem.getSimpleItem(itemStack, plugin);
 
-        if(simpleItem == null) return;
+        if (simpleItem == null) return;
 
         simpleItem.click(player, e.getAction());
     }
@@ -39,7 +45,7 @@ public class ItemListener implements Listener {
     public void on(InventoryClickEvent e) {
         if (e.getCurrentItem() == null) return;
 
-        SimpleItem simpleItem = SimpleItem.getSimpleItem(e.getCurrentItem());
+        SimpleItem simpleItem = SimpleItem.getSimpleItem(e.getCurrentItem(), plugin);
         if (simpleItem != null && !simpleItem.isCanChangePosition()) {
             e.setCancelled(true);
         }
@@ -48,7 +54,7 @@ public class ItemListener implements Listener {
     @EventHandler
     public void on(PlayerDropItemEvent e) {
         ItemStack droppedItem = e.getItemDrop().getItemStack();
-        SimpleItem simpleItem = SimpleItem.getSimpleItem(droppedItem);
+        SimpleItem simpleItem = SimpleItem.getSimpleItem(droppedItem, plugin);
 
         if (simpleItem != null && !simpleItem.isCanDrop()) {
             e.setCancelled(true);
@@ -59,9 +65,8 @@ public class ItemListener implements Listener {
     public void on(BlockPlaceEvent e) {
         final Player player = e.getPlayer();
 
-        if(SimpleItem.getSimpleItem(e.getItemInHand()) != null) {
+        if (SimpleItem.getSimpleItem(e.getItemInHand(), plugin) != null) {
             e.setCancelled(true);
         }
     }
-
 }

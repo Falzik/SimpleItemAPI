@@ -15,7 +15,7 @@ public final class FastInteractItems extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
-        getServer().getPluginManager().registerEvents(new ItemListener(), this);
+        getServer().getPluginManager().registerEvents(new ItemListener(this), this);
     }
 
     @Override
